@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ED Handoff Simulator</title>
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #f8fafc; padding: 20px; }
+        .box { background: white; max-width: 600px; margin: auto; padding: 30px; border-radius: 12px; border-top: 10px solid #fa4616; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .input-group { margin-bottom: 20px; }
+        label { font-weight: bold; display: block; margin-bottom: 5px; color: #475569; }
+        input { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; }
+        .result-box { background: #002278; color: white; padding: 20px; border-radius: 8px; text-align: center; margin-top: 20px; }
+        .calc-steps { background: #f1f5f9; padding: 15px; margin-top: 20px; border-radius: 8px; font-size: 0.9rem; color: #334155; }
+    </style>
+</head>
+<body>
+
+<div class="box">
+    <h2>🚑 ED Handoff Optimizer</h2>
+    <p>How much time can AI "shave off" the lobby wait?</p>
+
+    <div class="input-group">
+        <label>Daily Admissions from ED</label>
+        <input type="number" id="admits" value="15" oninput="run()">
+    </div>
+    
+    <div class="input-group">
+        <label>Current Handoff Delay (Minutes)</label>
+        <input type="number" id="delay" value="240" oninput="run()">
+    </div>
+
+    <div class="input-group">
+        <label>AI Efficiency Gain (%)</label>
+        <input type="number" id="gain" value="25" oninput="run()">
+    </div>
+
+    <div class="result-box">
+        <div style="font-size: 0.9rem; opacity: 0.8;">Total Lobby Time Saved / Day</div>
+        <div id="totalSaved" style="font-size: 2.5rem; font-weight: 800;">--</div>
+    </div>
+
+    <div class="calc-steps" id="steps"></div>
+</div>
+
+<script>
+function run() {
+    const admits = parseFloat(document.getElementById('admits').value) || 0;
+    const delay = parseFloat(document.getElementById('delay').value) || 0;
+    const gain = (parseFloat(document.getElementById('gain').value) || 0) / 100;
+
+    const savedPerPatient = delay * gain;
+    const totalMinutes = admits * savedPerPatient;
+    const totalHours = totalMinutes / 60;
+
+    document.getElementById('totalSaved').innerText = totalHours.toFixed(1) + " Hours";
+    
+    document.getElementById('steps').innerHTML = `
+        <b>Manual Verification:</b><br>
+        1. ${savedPerPatient.toFixed(0)} mins saved per patient.<br>
+        2. ${admits} patients x ${savedPerPatient.toFixed(0)} mins = ${totalMinutes.toFixed(0)} total mins.<br>
+        3. ${totalMinutes.toFixed(0)} / 60 = <b>${totalHours.toFixed(1)} hours</b> freed in the ED lobby today.
+    `;
+}
+window.onload = run;
+</script>
+</body>
+</html>
